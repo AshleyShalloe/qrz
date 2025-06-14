@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>M7SGI - QRZ?</title>
+    <link rel="icon" href="favicon.svg" />
+    <style>
+        html {
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #CFC5DA;
+            color: black;
+            max-width: 750px;
+            margin: 0 auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 3em;
+        }
+
+        .card {
+            background: rgb(236, 236, 236);
+            color: black;
+            padding-left: 5px;
+            padding-right: 5px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border: 1px solid black;
+            min-height: 80px;
+            font-family: monospace;
+        }
+
+        .card:nth-of-type(odd) {
+            grid-column-start: 1;
+            grid-column-end: 1;
+            margin-left: 10px;
+        }
+
+        .card:nth-of-type(even) {
+            grid-column-start: 2;
+            grid-column-end: 2;
+            margin-right: 10px;
+        }
+
+        .card:last-of-type.card:nth-of-type(odd) {
+            grid-column-start: 1;
+            grid-column-end: 3;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .card:hover {
+            filter: brightness(1.2);
+            text-decoration: underline;
+        }
+
+        .cardContainer {
+            background: white;
+            border: 1px solid black;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-column-start: 1;
+            grid-column-end: 2;
+            box-shadow: 5px 5px 5px rgba(60, 60, 60, 0.388);
+            grid-column-gap: 10px;
+            grid-row-gap: 10px;
+            padding-bottom: 10px;
+            grid-auto-flow: column;
+            justify-items: stretch;
+            grid-template-columns: 50%;
+        }
+
+        .cardImg {
+            max-height: 200px;
+            display: block;
+            border: 1px solid gray;
+        }
+
+        #header {
+            border-left: 1px solid black;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            padding-left: 5px;
+            padding-right: 5px;
+            font-size: x-large;
+            box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.344);
+            margin-bottom: 20px;
+            background: #450852;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        @media only screen and (max-width: 650px) {
+
+            div.leftcard,
+            div.rightcard {
+                float: none;
+                width: unset;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .cardContainer>.card {
+                height: unset;
+            }
+        }
+
+        .cardHeader {
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            padding-right: 5px;
+            font-size: larger;
+            border-bottom: 1px solid black;
+            font-weight: lighter;
+            display: flex;
+            justify-content: space-between;
+            user-select: none;
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
+
+        .cardContainer .cardHeader {
+            background: #8F1F88;
+            color: white;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .titlebarButton {
+            border: 1px solid black;
+            height: 1em;
+            width: 1em;
+            background: #e3e3e3;
+            text-align: center;
+            line-height: 1em;
+            font-weight: 400;
+            box-shadow: inset 0.04em 0.04em 0.04em 0 rgb(255 255 255 / 50%), inset -0.04em -0.04em 0.04em 0 rgb(0 0 0 / 50%);
+            color: black;
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            align-content: center;
+            justify-content: center;
+        }
+
+        .titlebarButton:hover {
+            filter: brightness(1.2);
+        }
+
+        #taskbar {
+            position: fixed;
+            user-select: none;
+            bottom: 0;
+            left: 0;
+            height: 2em;
+            background: #e1e1e1;
+            display: flex;
+            width: 100%;
+            flex-direction: row;
+            justify-content: space-between;
+            align-content: space-between;
+            align-items: center;
+        }
+
+        #startButton {
+            display: inline-block;
+            user-select: none;
+            white-space: nowrap;
+            background: #e1e1e1;
+            height: 1.8em;
+            width: 4em;
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+            margin-right: 0.3em;
+            line-height: 1.8em;
+            padding-left: 8px;
+            padding-right: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: inset 0.1em 0.1em 0.1em 0 rgb(255 255 255 / 50%), inset -0.1em -0.1em 0.1em 0 rgb(0 0 0 / 50%);
+        }
+
+        #startButton:hover {
+            filter: brightness(1.2);
+        }
+
+        #taskbarClock {
+            display: inline-block;
+            user-select: none;
+            cursor: default;
+            white-space: nowrap;
+            margin-right: 0.2em;
+            height: 1.8em;
+            padding-left: 4px;
+            padding-right: 4px;
+            line-height: 1.8em;
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+            box-shadow: inset 0.05em 0.05em 0.05em 0 rgb(46 46 46 / 50%), inset -0.05em -0.05em 0.05em 0 rgb(205 205 205 / 50%)
+        }
+
+        #windowButtonContainer {
+            width: -webkit-fill-available;
+            width: -moz-available;
+            white-space: nowrap;
+            overflow-x: scroll;
+        }
+
+        #windowButtonContainer::-webkit-scrollbar {
+            display: none;
+        }
+
+        .windowButton {
+            display: inline-block;
+            user-select: none;
+            width: 150px;
+            margin-left: 0.2em;
+            margin-right: 0.2em;
+            background: #e1e1e1;
+            cursor: default;
+            padding-left: 0.4em;
+            padding-right: 0.4em;
+            height: 1.8em;
+            margin-top: 0.1em;
+            margin-bottom: 0.1em;
+            line-height: 1.8em;
+            box-shadow: inset 0.05em 0.05em 0.05em 0 rgb(255 255 255), inset -0.05em -0.05em 0.05em 0 rgb(0 0 0 / 50%)
+        }
+
+        .windowButton:hover {
+            filter: brightness(1.5) saturate(0.5);
+        }
+
+        .windowButton:nth-child(4n):hover {
+            background: #4C9B33;
+        }
+
+        .windowButton:nth-child(4n-3):hover {
+            background: #E2677B;
+        }
+
+        .windowButton:nth-child(4n-2):hover {
+            background: #239E8A;
+        }
+
+        .windowButton:nth-child(4n-1):hover {
+            background: #B96AD2;
+        }
+
+        #startButton .sb-text {
+            display: inline-block;
+        }
+
+        #startButton .sb-text:first-child {
+            padding-right: 4px;
+        }
+
+        #startMenu {
+            display: grid;
+            left: 0;
+            border-top: 2px solid white;
+            border-left: 2px solid white;
+            background: #e1e1e1;
+            position: fixed;
+            transition: bottom 0.2s;
+            cursor: default;
+            box-shadow: inset 0.1em 0.1em 0.1em 0 rgb(255 255 255 / 50%), inset -0.1em -0.1em 0.1em 0 rgb(0 0 0 / 50%);
+        }
+
+        #startMenuLeftBanner {
+            background: linear-gradient(0deg, #5986d9, #b86ad2);
+            grid-column-start: 1;
+            color: white;
+            font-weight: bold;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
+            padding: 7px 2px 3px 2px;
+            font-size: large;
+            user-select: none;
+        }
+
+        #startMenuList {
+            grid-column-start: 2;
+            background: inherit;
+        }
+
+        #startMenuList li {
+            padding: 7px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-left: 2px;
+            margin-right: 4px;
+            user-select: none;
+            background: inherit;
+        }
+
+        #startMenuList li:hover {
+            background: #5986d9;
+            color: white;
+        }
+
+        #startMenuList li.expandable::after {
+            content: "▸";
+            margin-left: 10px;
+            transform: translateX(7px);
+        }
+
+        #startMenuList li:nth-last-child(2) {
+            border-bottom: 1px solid #cdcdcd;
+        }
+
+        #startMenuList li:last-child {
+            border-top: 1px solid white;
+        }
+
+        .unstyledList {
+            list-style-type: none;
+            margin: 0;
+            padding-inline-start: 0;
+            margin-block-start: 0;
+            margin-block-end: 0;
+            margin-inline-start: 0;
+            margin-inline-end: 0;
+        }
+
+        .submenu {
+            display: none;
+            position: absolute;
+            left: 100%;
+            background: #e1e1e1;
+            color: black;
+            padding: 2px;
+            transform: translateY(-9px);
+            margin: 0;
+            width: 100%;
+            border-bottom: 2px solid #cdcdcd;
+            border-top: 2px solid white;
+            border-left: 2px solid white;
+            border-right: 2px solid #cdcdcd;
+        }
+
+        .submenu li {
+            border: unset !important;
+        }
+
+        #itIsNowSafe {
+            color: #c27f53;
+            text-align: center;
+            font-size: xxx-large;
+            user-select: none;
+        }
+
+        .modal {
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+            border: 1px solid black;
+            position: fixed;
+            box-shadow: 5px 5px 5px #00000099;
+            text-align: center;
+            background: rgb(243 224 242 / 95%)
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .modalSection {
+            padding: 10px;
+            margin: 10px;
+            background: rgba(236, 236, 236, 0.798);
+            border: 1px solid black;
+            grid-row-start: 2;
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
+
+        @media (orientation: portrait) {
+            #vmModal iframe {
+                height: 60vw;
+                width: 80vw;
+            }
+        }
+
+        @media (orientation: landscape) {
+            #vmModal iframe {
+                height: 60vh;
+                width: 80vh;
+            }
+        }
+
+        #ssModal {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            border: 0px;
+            pointer-events: none;
+        }
+
+        @media (max-width: 500px) {
+            .card:nth-of-type(odd) {
+                grid-column-start: 1;
+                grid-column-end: 2;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .card:nth-of-type(even) {
+                grid-column-start: 1;
+                grid-column-end: 2;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            .cardContainer {
+                grid-template-columns: 100%;
+            }
+
+            .cardHeader {
+                grid-column-end: 1;
+            }
+
+            .card:last-of-type.card:nth-of-type(odd) {
+                grid-column-start: 1;
+                grid-column-end: 1;
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="header">
+        <span>M7SGI - QRZ? // Amateur Radio Stuff</span>
+        <span style="white-space: nowrap; font-size: smaller;" id="emoticon"></span>
+    </div>
+    <div class="cardContainer">
+        <div class="cardHeader">Welcome!<span>
+            </span></div>
+        <a class="card" href="https://www.qrz.com/db/m7sgi" target="_blank">
+            <div>
+                &gt;Who am I?<br>
+                Hi, I'm Ashe M7SGI! 🏳️‍⚧️
+            </div>
+        </a>
+        <a class="card" href="https://www.qrz.com/db/m7sgi" target="_blank">
+            <div>
+                &gt;Where am I?<br>
+                South Norwood, London, UK (IO91XJ).
+            </div>
+        </a>
+    </div>
+    <div class="cardContainer">
+        <div class="cardHeader">Clubs I'm in<span>
+            </span></div>
+        <a class="card" href="https://g3efx.org.uk/" target="_blank">
+            <div>
+                &gt;G3EFX<br>
+                The Radio Society of Harrow.
+            </div>
+        </a>
+        <a class="card" href="https://watlingcentre.org/en/activities/445-Edgware+%26+District+Radio+Society" target="_blank">
+            <div>
+                &gt;G3ASR<br>
+                Edgware and District Radio Society.
+            </div>
+        </a>
+        <a class="card" href="https://www.cprec.org/" target="_blank">
+            <div>
+                &gt;G2LW<br>
+                Crystal Palace Radio and Electronics Club.
+            </div>
+        </a>
+        <a class="card" href="http://southgatearc.uk/" target="_blank">
+            <div>
+                &gt;G3SFG<br>
+                Southgate Amateur Radio Club.
+            </div>
+        </a>
+    </div>
+    <div class="cardContainer">
+        <div class="cardHeader">Gear<span>
+            </span></div>
+        <a class="card">
+            <div>
+                &gt;VHF/UHF portable<br>
+                Yaesu FT1D - my first transceiver.
+            </div>
+        </a>
+        <a class="card">
+            <div>
+                &gt;VHF/UHF base<br>
+                Yaesu FTM-200 with a X50 vertical in the loft. Often listening, sometimes transmitting.
+            </div>
+        </a>
+
+        <a class="card">
+            <div>
+                &gt;HF/6m/4m base<br>
+                Yaesu FT-710 with a random wire in the garden for HF and a loft dipole for 6m.
+            </div>
+        </a>
+        <a class="card">
+            <div>
+                &gt;HF/6m portable<br>
+                Xiegu X6100.
+            </div>
+        </a>
+    </div>
+    <div class="cardContainer">
+        <div class="cardHeader">My website<span>
+            </span></div>
+        <a class="card" href="https://ashe.org.uk">
+            <div>
+                &gt;ashe.org.uk<br>
+                Random tools and bits of code, radio, bioinformatics and random.
+            </div>
+        </a>
+        <a class="card" href="https://github.com/AshleyShalloe" target="_blank">
+            <div>
+                &gt;GitHub<br>
+                Where this page and all my other stuff is!
+            </div>
+        </a>
+    </div>
+</body>
+<script>
+    'use strict'
+    function setRandomEmoticon() {
+        var emoticonArray = [
+            "¯\\_(ツ)_/¯",
+            "=^_^=",
+            "OwO",
+            "☆〜（ゝ。∂）",
+            "ヽ(^o^)",
+            "☆彡"
+        ]
+        document.getElementById("emoticon").innerText = emoticonArray[Math.floor(Math.random() * emoticonArray.length)]
+    }
+
+    function addTitlebarButtons() {
+        for (var i = 0; i < document.getElementsByClassName("cardHeader").length; i++) {
+            var buttonspan = "<span><div onclick='buttonPress(this)' class='titlebarButton'>X</div></span>"
+            document.getElementsByClassName("cardHeader")[i].innerHTML += buttonspan
+        }
+    }
+
+    function buttonPress(buttonElement) {
+        var emojiArray = ["🏳️‍⚧️", "🏳️‍🌈", "🌍", "🛰️", "📟", "📡", "🛜", "📶"]
+        buttonElement.innerText = emojiArray[Math.floor(Math.random() * emojiArray.length)]
+    }
+
+    function init() {
+        setRandomEmoticon();
+        addTitlebarButtons();
+    }
+
+    init();
+</script>
+
+</html>
